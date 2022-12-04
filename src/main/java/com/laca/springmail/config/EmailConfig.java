@@ -1,44 +1,63 @@
 package com.laca.springmail.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-
-import java.util.Objects;
 import java.util.Properties;
 
 
 @Configuration
-@PropertySource(value = "classpath:emailconfig.properties")
-public class EmailConfig   {
+@PropertySource("classpath:emailconfig.properties")
+public class EmailConfig {
 
-    private final Environment environment;
+    @Value("${EMAIL_HOST}")
+    private String host;
 
-    @Autowired
-    public EmailConfig(Environment environment) {
-        this.environment = environment;
-    }
+    @Value("${EMAIL_PORT}")
+    private Integer port;
+
+    @Value("${EMAIL_USERNAME}")
+    private String username;
+
+    @Value("${EMAIL_PASSWORD}")
+    private String password;
+
+    @Value("${EMAIL_SMTP_AUTH}")
+    private Boolean smtpAuth;
+
+    @Value("${EMAIL_SMTP_TIMEOUT}")
+    private Integer smtpTimeout;
+
+    @Value("${EMAIL_SMTP_CONNECTION_TIMEOUT}")
+    private Integer smtpConnectionTimeout;
+
+    @Value("${EMAIL_SMTP_WRITE_TIMEOUT}")
+    private Integer smtpWriteTimeout;
+
+    @Value("${EMAIL_SMTP_STARTTLS}")
+    private Boolean smtpStartTls;
+
 
     @Bean
     public JavaMailSender mailSender() {
 
-        final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-
-        mailSender.setHost(this.environment.getProperty("EMAIL_HOST"));
-        mailSender.setPort(Integer.parseInt(Objects.requireNonNull(this.environment.getProperty("EMAIL_PORT"))));
-        mailSender.setUsername(this.environment.getProperty("EMAIL_USERNAME"));
-        mailSender.setPassword(this.environment.getProperty("EMAIL_PASSWORD"));
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(host);
+        mailSender.setPort(port);
+        mailSender.setUsername(username);
+        mailSender.setPassword(password);
 
         Properties properties = mailSender.getJavaMailProperties();
-        properties.put("mail.smtp.auth", this.environment.getProperty("EMAIL_SMTP_AUTH"));
-        properties.put("mail.smtp.timeout", this.environment.getProperty("EMAIL_SMTP_TIMEOUT"));
-        properties.put("mail.smtp.connectiontimeout", this.environment.getProperty("EMAIL_SMTP_CONNECTION_TIMEOUT"));
-        properties.put("mail.smtp.writetimeout", this.environment.getProperty("EMAIL_SMTP_WRITE_TIMEOUT"));
+        properties.put("mail.smtp.auth", smtpAuth);
+        properties.put("mail.smtp.timeout", smtpTimeout);
+        properties.put("mail.smtp.connectiontimeout", smtpConnectionTimeout);
+        properties.put("mail.smtp.writetimeout", smtpWriteTimeout);
+
+        properties.put("mail.smtp.starttls.enable", smtpStartTls);
 
         return mailSender;
     }
