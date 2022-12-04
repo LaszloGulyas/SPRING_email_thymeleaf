@@ -38,9 +38,6 @@ public class EmailConfig {
     @Value("${EMAIL_SMTP_WRITE_TIMEOUT}")
     private Integer smtpWriteTimeout;
 
-    @Value("${EMAIL_SMTP_STARTTLS}")
-    private Boolean smtpStartTls;
-
 
     @Bean
     public JavaMailSender mailSender() {
@@ -56,7 +53,7 @@ public class EmailConfig {
         properties.put("mail.smtp.timeout", smtpTimeout);
         properties.put("mail.smtp.connectiontimeout", smtpConnectionTimeout);
         properties.put("mail.smtp.writetimeout", smtpWriteTimeout);
-        
+
         return mailSender;
     }
 }
